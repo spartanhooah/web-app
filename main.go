@@ -3,14 +3,21 @@ package main
 import (
 	"html/template"
 	"log"
+	"myapp/rps"
 	"net/http"
 )
 
 func main() {
+	http.HandleFunc("/play", playRound)
 	http.HandleFunc("/", homePage)
 
 	log.Println("Starting web server on port 8080")
 	http.ListenAndServe(":8080", nil)
+}
+
+func playRound(w http.ResponseWriter, r *http.Request) {
+	winner, computerChoice, roundResult := rps.PlayRound(1)
+	log.Println(winner, computerChoice, roundResult)
 }
 
 func homePage(response http.ResponseWriter, request *http.Request) {
