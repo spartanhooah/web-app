@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"html/template"
 	"log"
 	"myapp/rps"
 	"net/http"
+	"strconv"
 )
 
 func main() {
@@ -12,12 +14,21 @@ func main() {
 	http.HandleFunc("/", homePage)
 
 	log.Println("Starting web server on port 8080")
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe("localhost:8080", nil)
 }
 
 func playRound(w http.ResponseWriter, r *http.Request) {
-	winner, computerChoice, roundResult := rps.PlayRound(1)
-	log.Println(winner, computerChoice, roundResult)
+	playerChoice, _ := strconv.Atoi(r.URL.Query().Get("choice"))
+	result := rps.PlayRound(playerChoice)
+
+	out, err := json.MarshalIndent(result, "", "    ")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(out)
 }
 
 func homePage(response http.ResponseWriter, request *http.Request) {

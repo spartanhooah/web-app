@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,6 +10,7 @@
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <title>Rock, Paper, Scissors</title>
 </head>
+
 <body>
     <div class="container">
         <h1 class="mt-4">Rock, Paper, Scissors</h1>
@@ -16,19 +18,37 @@
 
         <p id="player_choice">&nbsp;</p>
         <p id="computer_choice">&nbsp;</p>
-        <p id="round_result">&nbsp;</p>
+        <p class="text-danger" id="round_result">&nbsp;</p>
+        <p class="text-success" id="message">&nbsp;</p>
 
         <hr>
         <p>Choose rock, paper, or scissors!</p>
-
         <br>
         <br>
-        
 
-        <button class="btn-outline-secondary">Rock</button>
-        <button class="btn-outline-danger">Paper</button>
-        <button class="btn-outline-success">Scissors</button>
+        <button class="btn-outline-secondary" onclick="choose(0)">Rock</button>
+        <button class="btn-outline-danger" onclick="choose(1)">Paper</button>
+        <button class="btn-outline-success" onclick="choose(2)">Scissors</button>
     </div>
 </body>
+<script>
+    function choose(x) {
+        fetch("/play?choice=" + x)
+            .then(response => response.json())
+            .then(data => {
+                if (x == 0) {
+                    document.getElementById("player_choice").innerHTML = "Player chose ROCK";
+                } else if (x == 1) {
+                    document.getElementById("player_choice").innerHTML = "Player chose PAPER";
+                } else {
+                    document.getElementById("player_choice").innerHTML = "Player chose SCISSORS";
+                }
+
+                document.getElementById("computer_choice").innerHTML = data.computerChoice
+                document.getElementById("round_result").innerHTML = data.roundResult
+                document.getElementById("message").innerHTML = data.message
+            })
+    }
+</script>
 
 </html>

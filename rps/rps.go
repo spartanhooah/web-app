@@ -6,41 +6,48 @@ import (
 )
 
 const (
-	ROCK          = 0
-	PAPER         = 1
-	SCISSORS      = 2
-	PLAYER_WINS   = 1
-	COMPUTER_WINS = 2
-	DRAW          = 3
+	ROCK     = 0
+	PAPER    = 1
+	SCISSORS = 2
 )
 
-func PlayRound(playerValue int) (int, string, string) {
+var messages = map[string][]string{
+	"player":   {"Good for you!", "Way to go!", "You win!"},
+	"computer": {"Aw, too bad.", "Try again?", "Oops"},
+	"draw":     {"Great minds think alike.", "It's a draw.", "Let's try that again."},
+}
+
+type Round struct {
+	Message        string `json:"message"`
+	ComputerChoice string `json:"computerChoice"`
+	RoundResult    string `json:"roundResult"`
+}
+
+func PlayRound(playerValue int) Round {
 	rand.Seed(time.Now().UnixNano())
 	computerValue := rand.Intn(2)
-	computerChoice := ""
+	var result Round
 
 	switch computerValue {
 	case ROCK:
-		computerChoice = "Computer chose ROCK"
+		result.ComputerChoice = "Computer chose ROCK"
 	case PAPER:
-		computerChoice = "Computer chose PAPER"
+		result.ComputerChoice = "Computer chose PAPER"
 	case SCISSORS:
-		computerChoice = "Computer chose SCISSORS"
+		result.ComputerChoice = "Computer chose SCISSORS"
 	default:
 	}
 
-	roundResult := ""
-	winner := 0
 	if playerValue == computerValue {
-		roundResult = "It's a draw"
-		winner = DRAW
+		result.RoundResult = "It's a draw"
+		result.Message = messages["draw"][rand.Intn(2)]
 	} else if playerValue == (computerValue+1)%3 {
-		roundResult = "Player wins!"
-		winner = PLAYER_WINS
+		result.RoundResult = "Player wins!"
+		result.Message = messages["player"][rand.Intn(2)]
 	} else {
-		roundResult = "Computer wins!"
-		winner = COMPUTER_WINS
+		result.RoundResult = "Computer wins!"
+		result.Message = messages["computer"][rand.Intn(2)]
 	}
 
-	return winner, computerChoice, roundResult
+	return result
 }
